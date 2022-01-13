@@ -13,3 +13,10 @@ If it is a "hit", the player who is hit marks this on their own or "ocean" grid 
 The attacking player marks the hit or miss on their own "tracking" or "target" grid in order to build up a picture of the opponent's fleet.
 
 When all of the squares of a ship have been hit, the ship's owner announces the sinking of the Carrier, Submarine, Cruiser/Destroyer/Patrol Boat, or the titular Battleship. If all of a player's ships have been sunk, the game is over and their opponent wins. If all ships of both players are sunk by the end of the round, the game is a draw.
+
+-first thoughts:
+ - player should have their own ships
+ - player should have 2 boards, one where he can see positions of his ships and second where he see hits and misses on an opponent board
+ - player have some methods that can fire shoots and place ships
+ - board should have some information about position of placed ships
+ - game should contain 2 players and there should be a possibility to start a game and finish it whether there is a draw or one of the players had win
