@@ -215,30 +215,33 @@ namespace Battleship
                 randomtohit.AddRange(positionsinX);
                 randomtohit.AddRange(positionsinY);
                 int index = random.Next(randomtohit.Count);
-                return randomtohit[index];
+                return randomtohit[index]; // co jak index zly
             }
             else
             {
                 if (hitpos.First().Y == hitpos.Last().Y) // sprawdzic M
                 {
-                    if (freePositions.Any(p => p.X == hitpos.Last().X + 1 && p.Y == hitpos.Last().Y))
+                    var sorted = hitpos.OrderBy(a=>a.X);
+                    if (freePositions.Any(p => p.X == sorted.Last().X + 1 && p.Y == sorted.Last().Y))
                     {
-                        return new Position(hitpos.Last().Y, hitpos.Last().X + 1);
+                        return new Position(sorted.Last().Y, sorted.Last().X + 1);
                     }
-                    else if (freePositions.Any(p => p.X == hitpos.First().X - 1 && p.Y == hitpos.First().Y))
+                    else if (freePositions.Any(p => p.X == sorted.First().X - 1 && p.Y == sorted.First().Y))
                     {
-                        return new Position(hitpos.First().Y, hitpos.First().X - 1);
+                        return new Position(sorted.First().Y, sorted.First().X - 1);
                     }
                 }
                 else if (hitpos.First().X == hitpos.Last().X)
                 {
-                    if (freePositions.Any(p => p.Y == hitpos.Last().Y + 1 && p.X == hitpos.Last().X))
+                    var sortedY = hitpos.OrderBy(a => a.Y);
+
+                    if (freePositions.Any(p => p.Y == sortedY.Last().Y + 1 && p.X == sortedY.Last().X))
                     {
-                        return new Position(hitpos.Last().Y + 1, hitpos.Last().X);
+                        return new Position(sortedY.Last().Y + 1, sortedY.Last().X);
                     }
-                    else if (freePositions.Any(p => p.Y == hitpos.First().X - 1 && p.Y == hitpos.First().Y))
+                    else if (freePositions.Any(p => p.Y == sortedY.First().X - 1 && p.Y == sortedY.First().Y))
                     {
-                        return new Position(hitpos.First().Y, hitpos.First().X - 1);
+                        return new Position(sortedY.First().Y, sortedY.First().X - 1);
                     }
                 }
             }
@@ -261,10 +264,11 @@ namespace Battleship
             }
         }
 
-        public bool CommunicateShipDestroy(Position pos)
+        public bool CommunicateShipDestroy(Position position)
         {
+            var myPos = board.Positions.First(pos => pos.X == position.X && pos.Y == position.Y);
 
-            if (pos.symbol != null && ships.First(s => s.Short == pos.symbol).isDestroyed())
+            if (ships.First(s => s.Short == myPos.symbol).isDestroyed())
                 return true;
             else
                 return false;
@@ -276,9 +280,10 @@ namespace Battleship
             a.isAvailable = false;
             if (isDestroyed)
             {
+                a.symbol = "X";
                 hitpos.Clear();
             }
-            if (isHit)
+            else if (isHit)
             {
                 a.symbol = "X";
                 hitpos.Add(position);

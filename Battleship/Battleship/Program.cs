@@ -15,13 +15,24 @@ namespace Battleship
             var p = new Player("p1");
             p.SetShips();
             var p2 = new Player("p2");
+            Console.WriteLine("p2 sips:");
             p2.SetShips();
-            for (int x = 0; x < 10; x++)
+            p2.ShowBoards();
+            for (int x = 0; x < 30; x++)
             {
                 var s = p.Shoot();
+                Console.WriteLine($"{s.X}, {s.Y}");
                 var c = p2.CheckPosition(s);
-                var isde = p2.CommunicateShipDestroy(s);
-                p.Process(c, s, isde);
+                Console.WriteLine($"{c.ToString()}");
+                if (c == true)
+                {
+                    var isde = p2.CommunicateShipDestroy(s);
+                    p.Process(c, s, isde);
+                }
+                else
+                {
+                    p.Process(c, s, false);
+                }
 
             }
 
