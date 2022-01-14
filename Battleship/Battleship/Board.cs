@@ -29,7 +29,7 @@ namespace Battleship
 
         public Position GetPositionFromBoard(int row, int y)
         {
-            var a = Positions.Where(x => x.X == row && x.Y == y).First();
+            var a = Positions.First(x => x.Y == row && x.X == y);
             return a;
         }
     }
