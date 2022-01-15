@@ -47,9 +47,9 @@ namespace Battleship
         {
             for (int row = 1; row <= 10; row++)
             {
-                for (int ownColumn = 1; ownColumn <= 10; ownColumn++)
+                for (int playerBoardColumn = 1; playerBoardColumn <= 10; playerBoardColumn++)
                 {
-                    var position = Board.GetPositionFromBoard(row, ownColumn);
+                    var position = Board.GetPositionFromBoard(row, playerBoardColumn);
                     if (position.IsAvailable)
                     {
                         Console.Write("." + "   ");
@@ -62,9 +62,9 @@ namespace Battleship
 
                 }
                 Console.Write("           ");
-                for (int firingColumn = 1; firingColumn <= 10; firingColumn++)
+                for (int hitBoardColumn = 1; hitBoardColumn <= 10; hitBoardColumn++)
                 {
-                    var position = OpponentBoard.GetPositionFromBoard(row, firingColumn);
+                    var position = OpponentBoard.GetPositionFromBoard(row, hitBoardColumn);
 
                     if (position.IsAvailable)
                     {
@@ -75,18 +75,18 @@ namespace Battleship
                         if (position.Symbol == "X")
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
-                            Console.Write($"{position.Symbol}"+ "  ");
+                            Console.Write($"{position.Symbol}" + "  ");
                             Console.ResetColor();
                         }
                         else if (position.Symbol == "M")
                         {
                             Console.ForegroundColor = ConsoleColor.DarkRed;
-                            Console.Write($"{position.Symbol}"+ "  ");
+                            Console.Write($"{position.Symbol}" + "  ");
                             Console.ResetColor();
                         }
                         else
                         {
-                            Console.Write($"{position.Symbol}"+ "   ");
+                            Console.Write($"{position.Symbol}" + "   ");
                         }
                     }
                 }
@@ -111,9 +111,8 @@ namespace Battleship
                     {
                         if (startColumn + ship.Length <= 10)
                         {
-                            var a = Board.Positions.Where(x =>
-                                x.X >= startColumn && x.X <= startColumn + ship.Length && x.Y == startRow).ToList();
-                            if (a.Any(x => !x.IsAvailable))
+                            var horizontalPositions = Board.GetHorizontalPositions(startColumn, startColumn + ship.Length, startRow);
+                            if (horizontalPositions.Any(x => !x.IsAvailable))
                             {
                                 isShipSet = false;
                                 continue;
@@ -128,7 +127,7 @@ namespace Battleship
                         }
                         else
                         {
-                            var a = Board.Positions.Where(x => x.X > startColumn - ship.Length && x.X <= startColumn && x.Y == startRow).ToList();
+                            var a = Board.Positions.Where(x => x.X >= startColumn - ship.Length && x.X <= startColumn && x.Y == startRow).ToList();//
                             if (a.Any(x => !x.IsAvailable))
                             {
                                 isShipSet = false;
@@ -150,9 +149,8 @@ namespace Battleship
                     {
                         if (startRow + ship.Length <= 10)
                         {
-                            var a = Board.Positions.Where(x =>
-                                x.Y >= startRow && x.Y <= startRow + ship.Length && x.X == startColumn).ToList();
-                            if (a.Any(x => !x.IsAvailable))
+                            var verticalPositions = Board.GetVerticalPositions(startRow, startRow + ship.Length, startColumn);
+                            if (verticalPositions.Any(x => !x.IsAvailable))
                             {
                                 isShipSet = false;
                                 continue;
@@ -168,7 +166,7 @@ namespace Battleship
                         }
                         else
                         {
-                            var a = Board.Positions.Where(x => x.Y > startRow - ship.Length && x.Y <= startRow && x.X == startColumn).ToList();
+                            var a = Board.Positions.Where(x => x.Y >= startRow - ship.Length && x.Y <= startRow && x.X == startColumn).ToList();//
                             if (a.Any(x => !x.IsAvailable))
                             {
                                 isShipSet = false;
@@ -195,130 +193,136 @@ namespace Battleship
         {
             if (hitPositions.Count > 0)
             {
-                var d = Search();
-                if (d != null)
+                Console.WriteLine($"{Name} search shot");
+                var foundPosition = SearchShot();
+                if (foundPosition != null)
                 {
-                    return d;
+                    return foundPosition;
                 }
             }
+            Console.WriteLine($"{Name} random shot");
+
+            return RandomShot();
+        }
+
+        private Position RandomShot()
+        {
             var random = new Random();
-            var freePositions = OpponentBoard.Positions.Where(pos => pos.IsAvailable).ToList();
+            var availablePositions = OpponentBoard.AvailablePositions;
             var found = false;
             var position = new Position();
             while (!found)
             {
-                var randomX = random.Next(1, 11);
-                var RandomY = random.Next(1, 11);
-                var a = freePositions.FirstOrDefault(pos => pos.Y == RandomY && pos.X == randomX);
-                if (a != null)
+                var randomColumn = random.Next(1, 11);
+                var randomRow = random.Next(1, 11);
+                var foundPosition = availablePositions.FirstOrDefault(pos => pos.Y == randomRow && pos.X == randomColumn);
+                if (foundPosition != null)
                 {
                     found = true;
-                    position = a;
+                    position = foundPosition;
                 }
             }
             return position;
         }
 
-        private Position Search()
+        private Position SearchShot()
         {
-            var freePositions = OpponentBoard.Positions.Where(pos => pos.IsAvailable).ToList();
-            var count = hitPositions.Count;
-            if (count == 1)
+            var availablePositions = OpponentBoard.AvailablePositions;
+            Console.WriteLine($"av pos: {availablePositions.Count}");
+            var hitPositionsCount = hitPositions.Count;
+            if (hitPositionsCount == 1)
             {
-                var firsttil = hitPositions.First();
+                var firstPosition = hitPositions.First();
                 var random = new Random();
-                var randomtohit = new List<Position>();
-                var positionsinY = freePositions.Where(p =>
-                    p.X >= firsttil.X - 1 && p.X <= firsttil.X + 1 && p.Y == firsttil.Y).ToList();
-                var positionsinX = freePositions
-                    .Where(p => p.Y >= firsttil.Y - 1 && p.Y <= firsttil.Y + 1 && p.X == firsttil.X).ToList();
-                randomtohit.AddRange(positionsinX);
-                randomtohit.AddRange(positionsinY);
-                if (randomtohit.Count != 0)
+                var closePositionsToHit = new List<Position>();
+                var positionsInRow = availablePositions.Where(p =>
+                    p.X >= firstPosition.X - 1 && p.X <= firstPosition.X + 1 && p.Y == firstPosition.Y).ToList();
+                var positionsInColumn = availablePositions
+                    .Where(p => p.Y >= firstPosition.Y - 1 && p.Y <= firstPosition.Y + 1 && p.X == firstPosition.X).ToList();
+                closePositionsToHit.AddRange(positionsInColumn);
+                closePositionsToHit.AddRange(positionsInRow);
+                if (closePositionsToHit.Count != 0)
                 {
-                    int index = random.Next(randomtohit.Count);
-                    return randomtohit[index]; // co jak index zly
+                    var index = random.Next(closePositionsToHit.Count);
+                    return closePositionsToHit[index];
                 }
                 else
                 {
-                    int index = random.Next(freePositions.Count);
-                    return freePositions[index];
+                    //in case if alghoritm made mistake because of two ships next to each other
+                    hitPositions.Clear();
+                    var index = random.Next(availablePositions.Count);
+                    return availablePositions[index];
                 }
             }
             else
             {
-                if (hitPositions.First().Y == hitPositions.Last().Y) // sprawdzic M
+                if (hitPositions.First().Y == hitPositions.Last().Y)
                 {
-                    var sorted = hitPositions.OrderBy(a => a.X);
-                    if (freePositions.Any(p => p.X == sorted.Last().X + 1 && p.Y == sorted.Last().Y))
+                    var sortedHitPositionsByRow = hitPositions.OrderBy(a => a.X);
+                    if (availablePositions.Any(p => p.X == sortedHitPositionsByRow.Last().X + 1 && p.Y == sortedHitPositionsByRow.Last().Y))
                     {
-                        return new Position(sorted.Last().Y, sorted.Last().X + 1);
+                        return new Position(sortedHitPositionsByRow.Last().Y, sortedHitPositionsByRow.Last().X + 1);
                     }
-                    else if (freePositions.Any(p => p.X == sorted.First().X - 1 && p.Y == sorted.First().Y))
+                    else if (availablePositions.Any(p => p.X == sortedHitPositionsByRow.First().X - 1 && p.Y == sortedHitPositionsByRow.First().Y))
                     {
-                        return new Position(sorted.First().Y, sorted.First().X - 1);
+                        return new Position(sortedHitPositionsByRow.First().Y, sortedHitPositionsByRow.First().X - 1);
                     }
                 }
                 else if (hitPositions.First().X == hitPositions.Last().X)
                 {
-                    var sortedY = hitPositions.OrderBy(a => a.Y);
+                    var sortedHitPositionsByColumn = hitPositions.OrderBy(a => a.Y);
 
-                    if (freePositions.Any(p => p.Y == sortedY.Last().Y + 1 && p.X == sortedY.Last().X))
+                    if (availablePositions.Any(p => p.Y == sortedHitPositionsByColumn.Last().Y + 1 && p.X == sortedHitPositionsByColumn.Last().X))
                     {
-                        return new Position(sortedY.Last().Y + 1, sortedY.Last().X);
+                        return new Position(sortedHitPositionsByColumn.Last().Y + 1, sortedHitPositionsByColumn.Last().X);
                     }
-                    else if (freePositions.Any(p => p.Y == sortedY.First().X - 1 && p.Y == sortedY.First().Y))
+                    else if (availablePositions.Any(p => p.Y == sortedHitPositionsByColumn.First().Y - 1 && p.X == sortedHitPositionsByColumn.First().X))
                     {
-                        return new Position(sortedY.First().Y, sortedY.First().X - 1);
+                        return new Position(sortedHitPositionsByColumn.First().Y - 1, sortedHitPositionsByColumn.First().X);
                     }
                 }
             }
-
             return null;
         }
 
-        public bool CheckPosition(Position pos)
+        public bool CheckPosition(Position hitPosition)
         {
-            var position = Board.Positions.FirstOrDefault(p => p.Y == pos.Y && p.X == pos.X);
+            var position = Board.GetPositionFromBoard(hitPosition.Y, hitPosition.X);
             if (position != null && position.Symbol != null)
             {
                 var ship = ships.First(s => s.Short == position.Symbol);
                 ship.Hits += 1;
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
-        public bool CommunicateShipDestroy(Position position)
+        public bool CommunicateShipDestroy(Position hitPosition)
         {
-            var myPos = Board.Positions.First(pos => pos.X == position.X && pos.Y == position.Y);
-
-            if (ships.First(s => s.Short == myPos.Symbol).isDestroyed())
+            var position = Board.GetPositionFromBoard(hitPosition.Y, hitPosition.X);
+            if (ships.First(s => s.Short == position.Symbol).isDestroyed())
                 return true;
             else
                 return false;
         }
 
-        public void Process(bool isHit, Position position, bool isDestroyed = false)
+        public void Process(bool isHit, Position hitPosition, bool isDestroyed = false)
         {
-            var a = OpponentBoard.Positions.First(pos => pos.Y == position.Y && pos.X == position.X);
-            a.IsAvailable = false;
+            var position = OpponentBoard.GetPositionFromBoard(hitPosition.Y, hitPosition.X);
+            position.IsAvailable = false;
             if (isDestroyed)
             {
-                a.Symbol = "X";
+                position.Symbol = "X";
                 hitPositions.Clear();
             }
             else if (isHit)
             {
-                a.Symbol = "X";
-                hitPositions.Add(position);
+                position.Symbol = "X";
+                hitPositions.Add(hitPosition);
             }
             else
             {
-                a.Symbol = "M";
+                position.Symbol = "M";
             }
         }
 

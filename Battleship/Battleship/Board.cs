@@ -11,6 +11,12 @@ namespace Battleship
         public List<Position> Positions { get; set; }
         public const int MaxRows = 10;
         public const int MaxColumns = 10;
+
+        public List<Position> AvailablePositions
+        {
+            get { return Positions.Where(pos => pos.IsAvailable).ToList(); }
+        }
+
         public Board()
         {
             InitializePanels();
@@ -30,7 +36,17 @@ namespace Battleship
 
         public Position GetPositionFromBoard(int row, int column)
         {
-            return Positions.First(x => x.Y == row && x.X == column);
+            return Positions.FirstOrDefault(x => x.X == column && x.Y == row);
+        }
+
+        public List<Position> GetHorizontalPositions(int startColumn, int endColumn, int row)
+        {
+            return Positions.Where(x => x.X >= startColumn && x.X <= endColumn && x.Y == row).ToList();
+        }
+
+        public List<Position> GetVerticalPositions(int startRow, int endRow, int column)
+        {
+            return Positions.Where(x => x.Y >= startRow && x.Y <= endRow && x.X == column).ToList();
         }
     }
 }
