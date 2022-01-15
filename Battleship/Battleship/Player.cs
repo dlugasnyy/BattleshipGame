@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Battleship.Models;
-using Microsoft.VisualBasic;
 
 namespace Battleship
 {
@@ -11,20 +9,28 @@ namespace Battleship
     {
         public string Name { get; set; }
         private List<Ship> ships { get; set; }
-        public Board board { get; set; }
-        public Board oponentBoard { get; set; }
-        private int destroyedShips { get; set; }
-        private List<Position> hitpos { get; set; }
+        public Board Board { get; set; }
+        public Board OpponentBoard { get; set; }
+        public int DestroyedShips => ships.Count(s => s.isDestroyed());
+
+        private List<Position> hitPositions { get; set; }
         private List<Position> missedPos { get; set; }
+
+        public bool DidLost
+        {
+            get
+            {
+                return ships.All(s => s.isDestroyed());
+            }
+        }
 
         public Player(string name)
         {
             Initialize();
             Name = name;
-            board = new Board();
-            oponentBoard = new Board();
-            hitpos = new List<Position>();
-            destroyedShips = 0;
+            Board = new Board();
+            OpponentBoard = new Board();
+            hitPositions = new List<Position>();
         }
 
         private void Initialize()
@@ -43,33 +49,46 @@ namespace Battleship
             {
                 for (int ownColumn = 1; ownColumn <= 10; ownColumn++)
                 {
-                    var pan = board.GetPositionFromBoard(row, ownColumn);
-                    if (pan.isAvailable)
+                    var position = Board.GetPositionFromBoard(row, ownColumn);
+                    if (position.IsAvailable)
                     {
                         Console.Write("." + "   ");
                     }
                     else
                     {
-                        Console.Write($"{pan.symbol}" + "   ");
+                        Console.Write($"{position.Symbol}" + "   ");
 
                     }
 
                 }
-                Console.Write("                ");
+                Console.Write("           ");
                 for (int firingColumn = 1; firingColumn <= 10; firingColumn++)
                 {
-                    var pan = oponentBoard.GetPositionFromBoard(row, firingColumn);
+                    var position = OpponentBoard.GetPositionFromBoard(row, firingColumn);
 
-                    if (pan.isAvailable)
+                    if (position.IsAvailable)
                     {
-                        Console.Write("." + "   ");
+                        Console.Write("." + "  ");
                     }
                     else
                     {
-                        // Console.BackgroundColor = ConsoleColor.DarkGreen;
-                        Console.Write($"{pan.symbol}" + "   ");
+                        if (position.Symbol == "X")
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write($"{position.Symbol}"+ "  ");
+                            Console.ResetColor();
+                        }
+                        else if (position.Symbol == "M")
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.Write($"{position.Symbol}"+ "  ");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.Write($"{position.Symbol}"+ "   ");
+                        }
                     }
-                    // Console.ResetColor();
                 }
                 Console.WriteLine(Environment.NewLine);
             }
@@ -92,35 +111,35 @@ namespace Battleship
                     {
                         if (startColumn + ship.Length <= 10)
                         {
-                            var a = board.Positions.Where(x =>
+                            var a = Board.Positions.Where(x =>
                                 x.X >= startColumn && x.X <= startColumn + ship.Length && x.Y == startRow).ToList();
-                            if (a.Any(x => !x.isAvailable))
+                            if (a.Any(x => !x.IsAvailable))
                             {
                                 isShipSet = false;
                                 continue;
                             }
                             for (int i = 0; i < ship.Length; i++)
                             {
-                                var x = board.Positions.First(pos => pos.X == startColumn + i && pos.Y == startRow);
-                                x.isAvailable = false;
-                                x.symbol = ship.Short;
+                                var x = Board.Positions.First(pos => pos.X == startColumn + i && pos.Y == startRow);
+                                x.IsAvailable = false;
+                                x.Symbol = ship.Short;
                             }
                             isShipSet = true;
                         }
                         else
                         {
-                            var a = board.Positions.Where(x => x.X > startColumn - ship.Length && x.X <= startColumn && x.Y == startRow).ToList();
-                            if (a.Any(x => !x.isAvailable))
+                            var a = Board.Positions.Where(x => x.X > startColumn - ship.Length && x.X <= startColumn && x.Y == startRow).ToList();
+                            if (a.Any(x => !x.IsAvailable))
                             {
                                 isShipSet = false;
                                 continue;
                             }
                             for (int i = 0; i < ship.Length; i++)
                             {
-                                var x = board.Positions.First(pos => pos.X == startColumn - i && pos.Y == startRow);
+                                var x = Board.Positions.First(pos => pos.X == startColumn - i && pos.Y == startRow);
 
-                                x.isAvailable = false;
-                                x.symbol = ship.Short;
+                                x.IsAvailable = false;
+                                x.Symbol = ship.Short;
 
                             }
                             isShipSet = true;
@@ -131,35 +150,35 @@ namespace Battleship
                     {
                         if (startRow + ship.Length <= 10)
                         {
-                            var a = board.Positions.Where(x =>
+                            var a = Board.Positions.Where(x =>
                                 x.Y >= startRow && x.Y <= startRow + ship.Length && x.X == startColumn).ToList();
-                            if (a.Any(x => !x.isAvailable))
+                            if (a.Any(x => !x.IsAvailable))
                             {
                                 isShipSet = false;
                                 continue;
                             }
                             for (int i = 0; i < ship.Length; i++)
                             {
-                                var x = board.Positions.First(pos => pos.Y == startRow + i && pos.X == startColumn);
-                                x.isAvailable = false;
-                                x.symbol = ship.Short;
+                                var x = Board.Positions.First(pos => pos.Y == startRow + i && pos.X == startColumn);
+                                x.IsAvailable = false;
+                                x.Symbol = ship.Short;
 
                             }
                             isShipSet = true;
                         }
                         else
                         {
-                            var a = board.Positions.Where(x => x.Y > startRow - ship.Length && x.Y <= startRow && x.X == startColumn).ToList();
-                            if (a.Any(x => !x.isAvailable))
+                            var a = Board.Positions.Where(x => x.Y > startRow - ship.Length && x.Y <= startRow && x.X == startColumn).ToList();
+                            if (a.Any(x => !x.IsAvailable))
                             {
                                 isShipSet = false;
                                 continue;
                             }
                             for (int i = 0; i < ship.Length; i++)
                             {
-                                var x = board.Positions.First(pos => pos.Y == startRow - i && pos.X == startColumn);
-                                x.isAvailable = false;
-                                x.symbol = ship.Short;
+                                var x = Board.Positions.First(pos => pos.Y == startRow - i && pos.X == startColumn);
+                                x.IsAvailable = false;
+                                x.Symbol = ship.Short;
 
                             }
                             isShipSet = true;
@@ -172,18 +191,18 @@ namespace Battleship
             }
         }
 
-        public Position Shoot()
+        public Position Shot()
         {
-            if (hitpos.Count > 0)
+            if (hitPositions.Count > 0)
             {
-                var d = search();
+                var d = Search();
                 if (d != null)
                 {
                     return d;
                 }
             }
             var random = new Random();
-            var freePositions = oponentBoard.Positions.Where(pos => pos.isAvailable).ToList();
+            var freePositions = OpponentBoard.Positions.Where(pos => pos.IsAvailable).ToList();
             var found = false;
             var position = new Position();
             while (!found)
@@ -200,28 +219,37 @@ namespace Battleship
             return position;
         }
 
-        public Position search()
+        private Position Search()
         {
-            var freePositions = oponentBoard.Positions.Where(pos => pos.isAvailable).ToList();
-            var count = hitpos.Count;
+            var freePositions = OpponentBoard.Positions.Where(pos => pos.IsAvailable).ToList();
+            var count = hitPositions.Count;
             if (count == 1)
             {
-                var firsttil = hitpos.First();
+                var firsttil = hitPositions.First();
                 var random = new Random();
                 var randomtohit = new List<Position>();
                 var positionsinY = freePositions.Where(p =>
                     p.X >= firsttil.X - 1 && p.X <= firsttil.X + 1 && p.Y == firsttil.Y).ToList();
-                var positionsinX = freePositions.Where(p=> p.Y >= firsttil.Y - 1 && p.Y <= firsttil.Y + 1 && p.X == firsttil.X).ToList();
+                var positionsinX = freePositions
+                    .Where(p => p.Y >= firsttil.Y - 1 && p.Y <= firsttil.Y + 1 && p.X == firsttil.X).ToList();
                 randomtohit.AddRange(positionsinX);
                 randomtohit.AddRange(positionsinY);
-                int index = random.Next(randomtohit.Count);
-                return randomtohit[index]; // co jak index zly
+                if (randomtohit.Count != 0)
+                {
+                    int index = random.Next(randomtohit.Count);
+                    return randomtohit[index]; // co jak index zly
+                }
+                else
+                {
+                    int index = random.Next(freePositions.Count);
+                    return freePositions[index];
+                }
             }
             else
             {
-                if (hitpos.First().Y == hitpos.Last().Y) // sprawdzic M
+                if (hitPositions.First().Y == hitPositions.Last().Y) // sprawdzic M
                 {
-                    var sorted = hitpos.OrderBy(a=>a.X);
+                    var sorted = hitPositions.OrderBy(a => a.X);
                     if (freePositions.Any(p => p.X == sorted.Last().X + 1 && p.Y == sorted.Last().Y))
                     {
                         return new Position(sorted.Last().Y, sorted.Last().X + 1);
@@ -231,9 +259,9 @@ namespace Battleship
                         return new Position(sorted.First().Y, sorted.First().X - 1);
                     }
                 }
-                else if (hitpos.First().X == hitpos.Last().X)
+                else if (hitPositions.First().X == hitPositions.Last().X)
                 {
-                    var sortedY = hitpos.OrderBy(a => a.Y);
+                    var sortedY = hitPositions.OrderBy(a => a.Y);
 
                     if (freePositions.Any(p => p.Y == sortedY.Last().Y + 1 && p.X == sortedY.Last().X))
                     {
@@ -251,11 +279,11 @@ namespace Battleship
 
         public bool CheckPosition(Position pos)
         {
-            var position = board.Positions.FirstOrDefault(p => p.Y == pos.Y && p.X == pos.X);
-            if (position != null && position.symbol != null)
+            var position = Board.Positions.FirstOrDefault(p => p.Y == pos.Y && p.X == pos.X);
+            if (position != null && position.Symbol != null)
             {
-                var ship = ships.First(s => s.Short == position.symbol);
-                ship.hits += 1;
+                var ship = ships.First(s => s.Short == position.Symbol);
+                ship.Hits += 1;
                 return true;
             }
             else
@@ -266,31 +294,31 @@ namespace Battleship
 
         public bool CommunicateShipDestroy(Position position)
         {
-            var myPos = board.Positions.First(pos => pos.X == position.X && pos.Y == position.Y);
+            var myPos = Board.Positions.First(pos => pos.X == position.X && pos.Y == position.Y);
 
-            if (ships.First(s => s.Short == myPos.symbol).isDestroyed())
+            if (ships.First(s => s.Short == myPos.Symbol).isDestroyed())
                 return true;
             else
                 return false;
         }
 
-        public void Process(bool isHit, Position position, bool isDestroyed)
+        public void Process(bool isHit, Position position, bool isDestroyed = false)
         {
-            var a = oponentBoard.Positions.First(pos => pos.Y == position.Y && pos.X == position.X);
-            a.isAvailable = false;
+            var a = OpponentBoard.Positions.First(pos => pos.Y == position.Y && pos.X == position.X);
+            a.IsAvailable = false;
             if (isDestroyed)
             {
-                a.symbol = "X";
-                hitpos.Clear();
+                a.Symbol = "X";
+                hitPositions.Clear();
             }
             else if (isHit)
             {
-                a.symbol = "X";
-                hitpos.Add(position);
+                a.Symbol = "X";
+                hitPositions.Add(position);
             }
             else
             {
-                a.symbol = "M";
+                a.Symbol = "M";
             }
         }
 

@@ -9,7 +9,7 @@ namespace Battleship.Models
     {
         public string Name { get; set; }
         public int Length { get; set; }
-        public int hits { get; set; }
+        public int Hits { get; set; }
         public string Short { get; set; }
         private List<Position> positions { get; set; }
 
@@ -19,9 +19,10 @@ namespace Battleship.Models
             Length = length;
             Short = shortName;
         }
+
         public bool isDestroyed()
         {
-            return hits >= Length;
+            return Hits >= Length;
         }
     }
 
@@ -29,23 +30,24 @@ namespace Battleship.Models
     {
         public int X { get; set; }
         public int Y { get; set; }
-        public bool isAvailable { get; set; }
-        public string symbol { get; set; }
+        public bool IsAvailable { get; set; }
+        public string Symbol { get; set; }
 
         public Position()
         {
             
         }
+
         public Position(int y, int x)
         {
             Y = y;
             X = x;
-            isAvailable = true;
+            IsAvailable = true;
         }
     }
 
-    public class AimingPosition : Position
-    {
-        public bool wasHitted { get; set; }
-    }
+    // public class AimingPosition : Position
+    // {
+    //     public bool wasHitted { get; set; }
+    // }
 }

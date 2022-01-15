@@ -15,6 +15,7 @@ namespace Battleship
         {
             InitializePanels();
         }
+
         public void InitializePanels()
         {
             Positions = new List<Position>();
@@ -27,10 +28,9 @@ namespace Battleship
             }
         }
 
-        public Position GetPositionFromBoard(int row, int y)
+        public Position GetPositionFromBoard(int row, int column)
         {
-            var a = Positions.First(x => x.Y == row && x.X == y);
-            return a;
+            return Positions.First(x => x.Y == row && x.X == column);
         }
     }
 }
