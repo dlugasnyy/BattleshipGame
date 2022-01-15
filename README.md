@@ -32,5 +32,6 @@ When all of the squares of a ship have been hit, the ship's owner announces the 
  - for now player should have mthods to select a position to shoot, communicate to another player if position was hit, if ships was destroyed, and method to process shot (mark on own board if shot was hit or missed).
  - i have to add logic to the game class to manage plays and turns;
  - probably move some LINQ to board class.
-
+ - there could be another class for firing board that inherits from Board.cs but I gave up that idea. Maybe if I would changed algorithm in some way and board would need some new methods then I would create that class.
+ - the same applies to ship class, i decided to only create one class and every ship is just a new object. I think it was unnecessary for now to how separate class for each ship 
 
