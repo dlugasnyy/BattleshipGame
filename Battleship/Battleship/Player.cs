@@ -7,15 +7,13 @@ namespace Battleship
 {
     public class Player
     {
+        private List<Position> hitPositions { get; set; }
+        private List<Position> missedPos { get; set; }
         public string Name { get; set; }
         private List<Ship> ships { get; set; }
         public Board Board { get; set; }
         public Board OpponentBoard { get; set; }
         public int DestroyedShips => ships.Count(s => s.isDestroyed());
-
-        private List<Position> hitPositions { get; set; }
-        private List<Position> missedPos { get; set; }
-
         public bool DidLost
         {
             get
@@ -119,26 +117,25 @@ namespace Battleship
                             }
                             for (int i = 0; i < ship.Length; i++)
                             {
-                                var x = Board.Positions.First(pos => pos.X == startColumn + i && pos.Y == startRow);
-                                x.IsAvailable = false;
-                                x.Symbol = ship.Short;
+                                var positionForShip = Board.Positions.First(pos => pos.X == startColumn + i && pos.Y == startRow);
+                                positionForShip.IsAvailable = false;
+                                positionForShip.Symbol = ship.Short;
                             }
                             isShipSet = true;
                         }
                         else
                         {
-                            var a = Board.Positions.Where(x => x.X >= startColumn - ship.Length && x.X <= startColumn && x.Y == startRow).ToList();//
-                            if (a.Any(x => !x.IsAvailable))
+                            var horizontalPositions = Board.GetHorizontalPositions(startColumn - ship.Length, startColumn, startRow);
+                            if (horizontalPositions.Any(x => !x.IsAvailable))
                             {
                                 isShipSet = false;
                                 continue;
                             }
                             for (int i = 0; i < ship.Length; i++)
                             {
-                                var x = Board.Positions.First(pos => pos.X == startColumn - i && pos.Y == startRow);
-
-                                x.IsAvailable = false;
-                                x.Symbol = ship.Short;
+                                var positionForShip = Board.Positions.First(pos => pos.X == startColumn - i && pos.Y == startRow);
+                                positionForShip.IsAvailable = false;
+                                positionForShip.Symbol = ship.Short;
 
                             }
                             isShipSet = true;
@@ -157,35 +154,32 @@ namespace Battleship
                             }
                             for (int i = 0; i < ship.Length; i++)
                             {
-                                var x = Board.Positions.First(pos => pos.Y == startRow + i && pos.X == startColumn);
-                                x.IsAvailable = false;
-                                x.Symbol = ship.Short;
+                                var positionForShip = Board.Positions.First(pos => pos.Y == startRow + i && pos.X == startColumn);
+                                positionForShip.IsAvailable = false;
+                                positionForShip.Symbol = ship.Short;
 
                             }
                             isShipSet = true;
                         }
                         else
                         {
-                            var a = Board.Positions.Where(x => x.Y >= startRow - ship.Length && x.Y <= startRow && x.X == startColumn).ToList();//
-                            if (a.Any(x => !x.IsAvailable))
+                            var verticalPositions = Board.GetVerticalPositions(startRow - ship.Length, startRow, startColumn);
+                            if (verticalPositions.Any(x => !x.IsAvailable))
                             {
                                 isShipSet = false;
                                 continue;
                             }
                             for (int i = 0; i < ship.Length; i++)
                             {
-                                var x = Board.Positions.First(pos => pos.Y == startRow - i && pos.X == startColumn);
-                                x.IsAvailable = false;
-                                x.Symbol = ship.Short;
+                                var positionForShip = Board.Positions.First(pos => pos.Y == startRow - i && pos.X == startColumn);
+                                positionForShip.IsAvailable = false;
+                                positionForShip.Symbol = ship.Short;
 
                             }
                             isShipSet = true;
-
                         }
-
                     }
                 }
-
             }
         }
 

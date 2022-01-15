@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Battleship.Models;
 
 namespace Battleship
 {
     public class Board
     {
-        public List<Position> Positions { get; set; }
         public const int MaxRows = 10;
         public const int MaxColumns = 10;
+        public List<Position> Positions { get; set; }
 
         public List<Position> AvailablePositions
         {

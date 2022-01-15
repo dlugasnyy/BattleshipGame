@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Text;
-
+﻿
 namespace Battleship.Models
 {
     public class Ship
@@ -11,7 +7,6 @@ namespace Battleship.Models
         public int Length { get; set; }
         public int Hits { get; set; }
         public string Short { get; set; }
-        private List<Position> positions { get; set; }
 
         public Ship(string name, int length, string shortName)
         {
@@ -45,9 +40,4 @@ namespace Battleship.Models
             IsAvailable = true;
         }
     }
-
-    // public class AimingPosition : Position
-    // {
-    //     public bool wasHitted { get; set; }
-    // }
 }
