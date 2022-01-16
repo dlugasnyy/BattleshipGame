@@ -17,19 +17,19 @@ When all of the squares of a ship have been hit, the ship's owner announces the 
 -first thoughts:
  - player should have their own ships
  - player should have 2 boards, one where he can see positions of his ships and second where he see hits and misses on an opponent board
- - player have some methods that can fire shoots and place ships
+ - player should have some methods that can fire shots and place ships
  - board should have some information about position of placed ships
  - game should contain 2 players and there should be a possibility to start a game and finish it whether there is a draw or one of the players had win
 
 -about algorithm:
- - I wanted to imitate a real game as much as it is possible. So Player 1 should know only what he could see in a real life, it means only coordinates he hitted correctly and coordinates he missed. The same applies to Player 2.
- - Keeping that in mind I wanted to create algorithm thas firstly shoots and random positions and then if it hitted some ship at that positions it ads this possition to the list.
+ - I wanted to imitate a real game as much as it is possible. So Player 1 should know only what he could see in a real life, it means only coordinates he hit correctly and coordinates he missed. The same applies to Player 2.
+ - Keeping that in mind I wanted to create algorithm thas firstly shoots and random positions and then if it hit some ship at that positions it ads this possition to the list.
  - if position was correct in next turn algorithm looks for the 4 nearest free possitions to the previous one ( one up, one down, one left, one right).
- - it choose randomly one from the (maximum) for positions. If it choose correctly and ship was hit, this positions is added to the list. If not, then it tries every positions that is left (from those maximum 4 positions). Eventualy it will find position with ship on it.
+ - it choose randomly one from the (maximum) four positions. If it choose correctly and ship was hit, this positions is added to the list. If not, then it tries every positions that is left (from those maximum 4 positions). Eventualy it will find position with ship on it.
  - in next turn when we already have 2 positions on list we search for another positions in the same orientation. It means if on the list we have positions e.g. (5,3) and (6,3) then it will only look for positions ( X,3).
 
 -about OOP:
- - for now player should have mthods to select a position to shoot, communicate to another player if position was hit, if ships was destroyed, and method to process shot (mark on own board if shot was hit or missed).
+ - for now player should have methods to select a position to shoot, communicate to another player if position was hit, if ships was destroyed, and method to process shot (mark on own board if shot was hit or missed).
  - i have to add logic to the game class to manage plays and turns;
  - probably move some LINQ to board class.
  - there could be another class for firing board that inherits from Board.cs but I gave up that idea. Maybe if I would changed algorithm in some way and board would need some new methods then I would create that class.
