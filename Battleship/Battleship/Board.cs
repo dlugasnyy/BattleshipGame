@@ -4,6 +4,7 @@ using Battleship.Models;
 
 namespace Battleship
 {
+    // TODO Move to Models
     public class Board
     {
         public const int MaxRows = 10;
