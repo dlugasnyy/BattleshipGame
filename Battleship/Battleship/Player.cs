@@ -222,7 +222,7 @@ namespace Battleship
         private Position SearchShot()
         {
             var availablePositions = OpponentBoard.AvailablePositions;
-            Console.WriteLine($"av pos: {availablePositions.Count}");
+            Console.WriteLine($"available positions: {availablePositions.Count}");
             var hitPositionsCount = hitPositions.Count;
             if (hitPositionsCount == 1)
             {

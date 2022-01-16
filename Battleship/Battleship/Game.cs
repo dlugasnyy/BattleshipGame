@@ -6,6 +6,7 @@ namespace Battleship
     {
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
+        private int roundCount { get; set; }
 
         public Game()
         {
@@ -24,11 +25,13 @@ namespace Battleship
             while (!Player1.DidLost && !Player2.DidLost)
             {
                 PlayRound();
+                roundCount++;
             }
             Player1.ShowBoards();
             Player2.ShowBoards();
             Console.WriteLine($"Player 1 destroyed: {Player2.DestroyedShips} ships");
             Console.WriteLine($"Player 2 destroyed: {Player1.DestroyedShips} ships");
+            Console.WriteLine($"Number of rounds: {roundCount}");
 
             if (Player1.DidLost)
             {
@@ -47,7 +50,6 @@ namespace Battleship
             var player1Shot = Player1.Shot();
             Console.WriteLine($"{player1Shot.X}, {player1Shot.Y}" + " player 1");
             var player1DidHit = Player2.CheckPosition(player1Shot);
-            Console.WriteLine($"{player1DidHit.ToString()}");
             if (player1DidHit)
             {
                 var wasShipDestroyed = Player2.CommunicateShipDestroy(player1Shot);
@@ -63,7 +65,6 @@ namespace Battleship
                 var player2Shot = Player2.Shot();
                 Console.WriteLine($"{player2Shot.X}, {player2Shot.Y}" + " player 2");
                 var player2DidHit = Player1.CheckPosition(player2Shot);
-                Console.WriteLine($"{player2DidHit.ToString()}");
                 if (player2DidHit)
                 {
                     var wasShipDestroyed = Player1.CommunicateShipDestroy(player2Shot);
