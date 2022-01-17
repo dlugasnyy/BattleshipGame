@@ -1,4 +1,5 @@
 ﻿using System;
+using Battleship.Models;
 
 namespace Battleship
 {
@@ -14,6 +15,15 @@ namespace Battleship
             DisplayStartInfo();
         }
 
+        public void PlayGame()
+        {
+            while (!GameIsFinished())
+            {
+                PlayRound();
+            }
+            DisplaySummary();
+        }
+
         private void DisplayStartInfo()
         {
             Console.WriteLine("Player 1 ships:");
@@ -26,38 +36,14 @@ namespace Battleship
         {
             Player1 = new Player("Player 1");
             Player2 = new Player("Player 2");
+
             Player1.SetShips();
             Player2.SetShips();
         }
 
-        public void PlayGame()
-        {
-            while (!GameIsFinished())
-            {
-                PlayRound();
-            }
-            DisplaySummary();
-
-            if (Player1.DidLost)
-            {
-                Console.WriteLine("Player 2 won the game!");
-            }
-
-            if (Player2.DidLost)
-            {
-                Console.WriteLine("Player 1 won the game!"
-                );
-            }
-
-        }
-
         private bool GameIsFinished()
         {
-            if (Player1.DidLost || Player2.DidLost)
-            {
-                return true;
-            }
-            return false;
+            return Player1.DidLost || Player2.DidLost;
         }
 
         private void DisplaySummary()
@@ -67,39 +53,52 @@ namespace Battleship
             Console.WriteLine($"Player 1 destroyed: {Player2.DestroyedShips} ships");
             Console.WriteLine($"Player 2 destroyed: {Player1.DestroyedShips} ships");
             Console.WriteLine($"Number of rounds: {roundCount}");
+
+            var winnerName = ResolveWinnerName();
+            Console.WriteLine($"{winnerName} won the game!");
         }
 
         private void PlayRound()
         {
-            var player1Shot = Player1.Shot();
-            Console.WriteLine($"{player1Shot.X}, {player1Shot.Y}" + " player 1");
-            var player1DidHit = Player2.CheckPosition(player1Shot);
-            if (player1DidHit)
+            ProcessShooting(Player1, Player2);
+            ProcessShooting(Player2, Player1);
+            roundCount++;
+        }
+
+        private string ResolveWinnerName()
+        {
+            if (Player1.DidLost)
             {
-                var wasShipDestroyed = Player2.CommunicateShipDestroy(player1Shot);
-                Player1.Process(player1DidHit, player1Shot, wasShipDestroyed);
+                return Player2.Name;
+            }
+
+            return Player1.Name;
+        }
+
+        private void ProcessShooting(Player playerAttacking, Player playerDefending)
+        {
+            var shotPosition = playerAttacking.Shot();
+            LogPlayerShot(playerAttacking, shotPosition);
+            Console.WriteLine($"{shotPosition.X}, {shotPosition.Y}" +$"{playerAttacking.Name}");
+            var ifHit = playerDefending.CheckPosition(shotPosition);
+            if (ifHit)
+            {
+                var wasShipDestroyed = playerDefending.CommunicateShipDestroy(shotPosition);
+                playerAttacking.Process(ifHit, shotPosition, wasShipDestroyed);
             }
             else
             {
-                Player1.Process(player1DidHit, player1Shot);
+                playerAttacking.Process(ifHit, shotPosition);
             }
+            // var shotResult = playerDefending.EvaluateShotDamage(shotPosition);
+            // playerAttacking.ApplyShotResult(shotPosition, shotResult);
 
-            if (!Player2.DidLost)
-            {
-                var player2Shot = Player2.Shot();
-                Console.WriteLine($"{player2Shot.X}, {player2Shot.Y}" + " player 2");
-                var player2DidHit = Player1.CheckPosition(player2Shot);
-                if (player2DidHit)
-                {
-                    var wasShipDestroyed = Player1.CommunicateShipDestroy(player2Shot);
-                    Player2.Process(player2DidHit, player2Shot, wasShipDestroyed);
-                }
-                else
-                {
-                    Player2.Process(player2DidHit, player2Shot);
-                }
-            }
-            roundCount++;
+        }
+
+        // TODO Should be introduced class Logger for future replacing loggigng
+        private void LogPlayerShot(Player playerAttacking, Position shot)
+        {
+            // Logger.Log($"{shot.X}, {shot.Y} - {playerAttacking.Name}");
         }
     }
 }
