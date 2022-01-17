@@ -11,6 +11,15 @@ namespace Battleship
         public Game()
         {
             InitializeGame();
+            DisplayStartInfo();
+        }
+
+        private void DisplayStartInfo()
+        {
+            Console.WriteLine("Player 1 ships:");
+            Player1.ShowBoards();
+            Console.WriteLine("Player 2 ships:");
+            Player2.ShowBoards();
         }
 
         private void InitializeGame()
@@ -19,10 +28,6 @@ namespace Battleship
             Player2 = new Player("Player 2");
             Player1.SetShips();
             Player2.SetShips();
-            Console.WriteLine("Player 1 sips:");
-            Player1.ShowBoards();
-            Console.WriteLine("Player 2 sips:");
-            Player2.ShowBoards();
         }
 
         public void PlayGame()
@@ -40,7 +45,8 @@ namespace Battleship
 
             if (Player2.DidLost)
             {
-                Console.WriteLine("Player 1 won the game!");
+                Console.WriteLine("Player 1 won the game!"
+                );
             }
 
         }

@@ -31,9 +31,13 @@ namespace Battleship.Models
             }
         }
 
-        public Position GetPositionFromBoard(int row, int column)
+        public Position GetPositionByCoords(int posY, int posX)
         {
-            return Positions.FirstOrDefault(x => x.X == column && x.Y == row);
+            return Positions.FirstOrDefault(x => x.X == posX && x.Y == posY);
+        }
+        public Position GetPositionFromBoard(Position position)
+        {
+            return Positions.FirstOrDefault(x => x.X == position.X && x.Y == position.Y);
         }
 
         public List<Position> GetHorizontalPositions(int startColumn, int endColumn, int row)
@@ -44,6 +48,11 @@ namespace Battleship.Models
         public List<Position> GetVerticalPositions(int startRow, int endRow, int column)
         {
             return Positions.Where(x => x.Y >= startRow && x.Y <= endRow && x.X == column).ToList();
+        }
+
+        internal void SetShips(Ship ship)
+        {
+
         }
     }
 }
