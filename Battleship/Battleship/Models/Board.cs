@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Battleship.Models;
 
-namespace Battleship
+namespace Battleship.Models
 {
     public class Board
     {

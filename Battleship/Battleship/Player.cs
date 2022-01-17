@@ -5,10 +5,23 @@ using Battleship.Models;
 
 namespace Battleship
 {
-    public class Player
+    public interface INextMoveProvider
+    {
+        Position Shot();
+    }
+    
+    public interface IPlayer
+    {
+        void ShowBoards();
+        void SetShips();
+        bool CheckPosition(Position hitPosition);
+        bool CommunicateShipDestroy(Position hitPosition);
+        void Process(bool isHit, Position hitPosition, bool isDestroyed = false);
+    }
+
+    public class Player :IPlayer, INextMoveProvider
     {
         private List<Position> hitPositions { get; set; }
-        private List<Position> missedPos { get; set; }
         public string Name { get; set; }
         private List<Ship> ships { get; set; }
         public Board Board { get; set; }
