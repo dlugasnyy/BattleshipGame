@@ -35,3 +35,8 @@ When all of the squares of a ship have been hit, the ship's owner announces the 
  - there could be another class for firing board that inherits from Board.cs but I gave up that idea. Maybe if I would changed algorithm in some way and board would need some new methods then I would create that class.
  - the same applies to ship class, i decided to only create one class and every ship is just a new object. I think it was unnecessary for now to how separate class for each ship 
 
+-another things:
+ - added some unit tests, unfortunately for now  I leave them unfinished - there is plenty of things to test with search shot and efficiency of this algorithm
+ - refactored board and player classes, extracted interfaces for placing ships on board and for Shot method. I did that because it simplify testing and makes possible to change algorithm in easy way
+ - create Boards class which holds instances of player board and opponent board. Thanks to that code is a little more cleaner
+ - created logger class to log some things. 
