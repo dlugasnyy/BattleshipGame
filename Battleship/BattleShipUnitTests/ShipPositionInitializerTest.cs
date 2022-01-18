@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Battleship;
 using Battleship.Models;
 using Xunit;
@@ -11,22 +9,23 @@ namespace BattleShipUnitTests
     public class ShipPositionInitializerTest
     {
         private readonly IShipsPositionsInitializer _shipsPositionsInitializer;
-        private Board board;
+        private readonly Board _board;
 
         public ShipPositionInitializerTest()
         {
             _shipsPositionsInitializer = new ShipsRandomPositionsInitializer();
-            board = new Board();
+            _board = new Board();
         }
+
         [Fact]
         public void AfterInitializeNumberOfNotAvailablePositionsShouldBeEqualToSumOfAllShipsLengths()
         {
             var ships = InitializeShips();
-            _shipsPositionsInitializer.InitializeShipsPositions(board, ships);
+            _shipsPositionsInitializer.InitializeShipsPositions(_board, ships);
             var shipsLengthsSum = ships.Sum(x => x.Length);
-            var numberOfNotAvailablePositions = board.Positions.Count(x => !x.IsAvailable);
+            var numberOfNotAvailablePositions = _board.Positions.Count(x => !x.IsAvailable);
             Assert.Equal(shipsLengthsSum, numberOfNotAvailablePositions);
-            Assert.All(board.AvailablePositions, pos=>Assert.Null(pos.Symbol) );
+            Assert.All(_board.AvailablePositions, pos=>Assert.Null(pos.Symbol) );
         }
 
         private List<Ship> InitializeShips()

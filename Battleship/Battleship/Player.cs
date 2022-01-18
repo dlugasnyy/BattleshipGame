@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Battleship.Models;
 
@@ -27,8 +26,8 @@ namespace Battleship
                 return ships.All(s => s.isDestroyed());
             }
         }
-        private  IShipsPositionsInitializer _shipsPositionsInitializer { get; set; }
-        private  IPlayerShotProvider _playerShotProvider { get; set; }
+        private  IShipsPositionsInitializer _shipsPositionsInitializer { get; }
+        private  IPlayerShotProvider _playerShotProvider { get; }
         private List<Position> hitPositions { get; }
         private List<Ship> ships { get; set; }
 
@@ -116,6 +115,7 @@ namespace Battleship
         {
             return _playerShotProvider.SearchShot(Boards.OpponentBoard, hitPositions);
         }
+
         private void Initialize()
         {
             ships = new List<Ship>();

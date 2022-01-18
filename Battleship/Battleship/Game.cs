@@ -89,9 +89,6 @@ namespace Battleship
             {
                 playerAttacking.Process(ifHit, shotPosition);
             }
-            // var shotResult = playerDefending.EvaluateShotDamage(shotPosition);
-            // playerAttacking.ApplyShotResult(shotPosition, shotResult);
-
         }
 
         private void LogPlayerShot(Player playerAttacking, Position shot)
