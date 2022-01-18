@@ -49,10 +49,5 @@ namespace Battleship.Models
         {
             return Positions.Where(x => x.Y >= startRow && x.Y <= endRow && x.X == column).ToList();
         }
-
-        internal void SetShips(Ship ship)
-        {
-
-        }
     }
 }

@@ -34,8 +34,8 @@ namespace Battleship
 
         private void InitializeGame()
         {
-            Player1 = new Player("Player 1");
-            Player2 = new Player("Player 2");
+            Player1 = new Player("Player 1", new PlayerShotProvider(), new ShipsRandomPositionsInitializer());
+            Player2 = new Player("Player 2", new PlayerShotProvider(),new ShipsRandomPositionsInitializer());
 
             Player1.SetShips();
             Player2.SetShips();
@@ -79,7 +79,6 @@ namespace Battleship
         {
             var shotPosition = playerAttacking.Shot();
             LogPlayerShot(playerAttacking, shotPosition);
-            Console.WriteLine($"{shotPosition.X}, {shotPosition.Y}" +$"{playerAttacking.Name}");
             var ifHit = playerDefending.CheckPosition(shotPosition);
             if (ifHit)
             {
@@ -95,10 +94,9 @@ namespace Battleship
 
         }
 
-        // TODO Should be introduced class Logger for future replacing loggigng
         private void LogPlayerShot(Player playerAttacking, Position shot)
         {
-            // Logger.Log($"{shot.X}, {shot.Y} - {playerAttacking.Name}");
+            Logger.Log($"{shot.X}, {shot.Y} - {playerAttacking.Name}");
         }
     }
 }

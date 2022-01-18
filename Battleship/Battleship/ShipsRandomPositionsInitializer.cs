@@ -8,11 +8,7 @@ namespace Battleship
 {
     public class ShipsRandomPositionsInitializer : IShipsPositionsInitializer
     {
-        public ShipsRandomPositionsInitializer()
-        {
-
-        }
-
+        
         public void InitializeShipsPositions(Board board, List<Ship> ships)
         {
             foreach (var ship in ships)
@@ -32,7 +28,6 @@ namespace Battleship
                             var horizontalPositions = board.GetHorizontalPositions(startColumn, startColumn + ship.Length, startRow);
                             if (horizontalPositions.Any(x => !x.IsAvailable))
                             {
-                                isShipSet = false;
                                 continue;
                             }
                             for (int i = 0; i < ship.Length; i++)
@@ -48,7 +43,6 @@ namespace Battleship
                             var horizontalPositions = board.GetHorizontalPositions(startColumn - ship.Length, startColumn, startRow);
                             if (horizontalPositions.Any(x => !x.IsAvailable))
                             {
-                                isShipSet = false;
                                 continue;
                             }
                             for (int i = 0; i < ship.Length; i++)
@@ -69,7 +63,6 @@ namespace Battleship
                             var verticalPositions = board.GetVerticalPositions(startRow, startRow + ship.Length, startColumn);
                             if (verticalPositions.Any(x => !x.IsAvailable))
                             {
-                                isShipSet = false;
                                 continue;
                             }
                             for (int i = 0; i < ship.Length; i++)
@@ -86,7 +79,6 @@ namespace Battleship
                             var verticalPositions = board.GetVerticalPositions(startRow - ship.Length, startRow, startColumn);
                             if (verticalPositions.Any(x => !x.IsAvailable))
                             {
-                                isShipSet = false;
                                 continue;
                             }
                             for (int i = 0; i < ship.Length; i++)
